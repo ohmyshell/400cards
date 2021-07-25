@@ -18,6 +18,7 @@ export default () => {
       <button
         disabled={currentRoom?.players.length !== 4}
         onClick={() => {
+          console.log('start');
           socket.emit('startGame', currentRoom.name);
         }}
       >

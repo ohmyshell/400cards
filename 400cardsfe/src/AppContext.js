@@ -10,6 +10,7 @@ export const Provider = ({ children }) => {
   const [rooms, setRooms] = React.useState([]);
   const [currentRoom, setCurrentRoom] = React.useState({});
   const [ping, setPing] = React.useState(0);
+  const [error, setError] = React.useState(0);
   const history = useHistory();
   let interval = -1;
 
@@ -22,6 +23,8 @@ export const Provider = ({ children }) => {
     setRooms,
     currentRoom,
     setCurrentRoom,
+    error,
+    setError,
   };
 
   React.useEffect(() => {
@@ -58,6 +61,10 @@ export const Provider = ({ children }) => {
         );
         setRooms(rooms);
         setCurrentRoom(tmpRoom);
+      });
+
+      socket.on('gameError', (err) => {
+        setError(err);
       });
     }
   }, [socket?.connected]);

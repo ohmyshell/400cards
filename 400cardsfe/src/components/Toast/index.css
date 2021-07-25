@@ -1,13 +1,15 @@
 .Toast {
   position: absolute;
-  top: 95%;
-  left: 100%;
+  top: 90vh;
+  right: -20rem;
   border: 1px solid red;
   color: red;
   border-radius: 3px;
   transition: all 250ms ease;
   padding: 1rem;
+  visibility: hidden;
 }
 .show {
-  left: 95%;
+  visibility: visible;
+  right: 5vw;
 }
