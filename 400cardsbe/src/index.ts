@@ -28,16 +28,14 @@ class App {
     });
 
     io.on('connection', (socket: Socket) => {
-
       console.log(
         `[${new Date().toLocaleString()}] connected ${socket.id}  ${
           socket.handshake.auth.username
         } Total Clients: ${io.engine.clientsCount}`
       );
 
-      socket.on("ping", (cb) => {
-        if (typeof cb === "function")
-          cb();
+      socket.on('ping', function () {
+        socket.emit('pong');
       });
 
       socket.emit('rooms', this.ROOMS);

@@ -55,7 +55,7 @@ export const Provider = ({ children }) => {
       }, 2000);
 
       socket.on('pong', function () {
-        latency = Date.now() - startTime;
+        let latency = Date.now() - startTime;
         console.log(latency);
       });
     }
