@@ -1,10 +1,11 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import AppContext from '../../AppContext';
+import './index.css';
 
 export default () => {
   const params = useParams();
-  const { currentRoom } = React.useContext(AppContext);
+  const { currentRoom, socket } = React.useContext(AppContext);
 
   return (
     <div className="Game">
@@ -12,6 +13,13 @@ export default () => {
         <p key={idx}>{player}</p>
       ))}
       {params.roomname}
+      <button
+        onClick={() => {
+          socket.emit('startGame', currentRoom.name);
+        }}
+      >
+        Start
+      </button>
     </div>
   );
 };
