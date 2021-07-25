@@ -1,0 +1,4 @@
+.Rooms {
+  display: flex;
+  flex-wrap: wrap;
+}

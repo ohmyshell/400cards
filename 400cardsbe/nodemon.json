@@ -1,0 +1,11 @@
+{
+  "watch": ["src"],
+  "ext": "ts,json",
+  "ignore": ["node_modules"],
+  "exec": "npm run compile && npm start",
+  "delay": "1500",
+  "events": {
+    "restart": "kill-port 6969",
+    "crash": "kill-port 6969"
+  }
+}

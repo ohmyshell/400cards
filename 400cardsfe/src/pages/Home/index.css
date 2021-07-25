@@ -1,0 +1,25 @@
+.Home {
+  display: flex;
+  flex-direction: column;
+}
+
+.Home > input,
+.Home > button {
+  padding: 0.5rem;
+  border: 1px solid gray;
+  border-radius: 3px;
+  background: none;
+  transition: all 100ms ease;
+  font-size: 1rem;
+}
+
+.Home > input:hover,
+.Home > button:hover {
+  border: 1px solid black;
+}
+
+.Home > button {
+  margin-top: 0.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}
