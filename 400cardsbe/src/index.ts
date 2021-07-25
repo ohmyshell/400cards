@@ -78,12 +78,7 @@ class App {
                 .emit("gameError", "Not enough players to start game");
               return;
             }
-            const players = new Array<Player>();
-            for (let index = 0; index < res.length; index++) {
-              players.push(
-                new Player(res[0].id, res[0].handshake.auth.username, [], 0)
-              );
-            }
+            const players = this.initializePlayers(res);
             const game = new Game(data, new Deck(), players, players[0].name);
             this.GAMES.push(game);
             let room: Room = this.ROOMS.find(
@@ -110,6 +105,21 @@ class App {
         new Room(gameConfig.rooms[i].name, gameConfig.roomStatus.open, [])
       );
     }
+  }
+  initializePlayers(res: any) {
+    const players = new Array<Player>();
+    let deck = new Deck();
+    for (let index = 0; index < res.length; index++) {
+      let deal = deck.deal_cards(gameConfig.dealPerPlayer400);
+      let player = new Player(
+        res[index].id,
+        res[index].handshake.auth.username,
+        deal,
+        0
+      );
+      players.push(player);
+    }
+    return players;
   }
 }
 new App();
