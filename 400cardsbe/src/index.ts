@@ -1,17 +1,17 @@
-import { RemoteSocket, Server, Socket } from 'socket.io';
-import { createServer } from 'http';
-import { Room } from './room';
-import { default as gameConfig } from './Config/config.json';
-import { Game } from './game';
-import { Player } from './player';
-import { Deck } from './deck';
+import { RemoteSocket, Server, Socket } from "socket.io";
+import { createServer } from "http";
+import { Room } from "./room";
+import { default as gameConfig } from "./Config/config.json";
+import { Game } from "./game";
+import { Player } from "./player";
+import { Deck } from "./deck";
 class App {
   PORT: string;
   ROOMS: Array<Room> = [];
   GAMES: Array<Game> = [];
   constructor() {
     this.initializeRooms();
-    this.PORT = process.env.PORT ? process.env.PORT : '6969';
+    this.PORT = process.env.PORT ? process.env.PORT : "6969";
     this.run();
   }
 
@@ -19,32 +19,32 @@ class App {
     const server = createServer();
     const io = new Server(server, {
       cors: {
-        origin: '*',
+        origin: "*",
       },
     });
 
     io.use((socket: Socket, next: Function) => {
       const username = socket.handshake.auth.username;
       if (!username) {
-        return next(new Error('invalid username'));
+        return next(new Error("invalid username"));
       }
       next();
     });
 
-    io.on('connection', (socket: Socket) => {
+    io.on("connection", (socket: Socket) => {
       console.log(
         `[${new Date().toLocaleString()}] connected ${socket.id}  ${
           socket.handshake.auth.username
         } Total Clients: ${io.engine.clientsCount}`
       );
 
-      socket.on('ping', function () {
-        socket.emit('pong');
+      socket.on("ping", function () {
+        socket.emit("pong");
       });
 
-      socket.emit('rooms', this.ROOMS);
+      socket.emit("rooms", this.ROOMS);
 
-      socket.on('disconnect', () => {
+      socket.on("disconnect", () => {
         const playerRoom = this.ROOMS.find((room: Room) =>
           room.players.includes(socket.handshake.auth.username)
         );
@@ -52,7 +52,7 @@ class App {
           playerRoom.players.indexOf(socket.handshake.auth.username),
           1
         );
-        io.emit('rooms', this.ROOMS);
+        io.emit("rooms", this.ROOMS);
         console.log(
           `[${new Date().toLocaleString()}] disconnected ${socket.id}  ${
             socket.handshake.auth.username
@@ -60,32 +60,42 @@ class App {
         );
       });
 
-      socket.on('room', (data) => {
+      socket.on("room", (data) => {
         socket.join(data);
         this.ROOMS.find((room: Room) => room.name === data)?.players.push(
           socket.handshake.auth.username
         );
-        io.emit('rooms', this.ROOMS);
+        io.emit("rooms", this.ROOMS);
       });
 
-      socket.on('startGame', (data) => {
-        io.in(data).fetchSockets().then( res=>{
-          if(res.length != 4){
-            socket.emit('gameError','Not enough players to start game');
-            return ;
-          }
-          const players = new Array<Player>();
-          for (let index = 0; index < res.length; index++) {
-            players.push(new Player(res[0].id,res[0].handshake.auth.username,[],0));
-          }
-          const game = new Game(data,new Deck(),players,players[0].name);
-          this.GAMES.push(game);
-          io.to(data).emit('game',game);
-        });
-      });  
+      socket.on("startGame", (data) => {
+        io.in(data)
+          .fetchSockets()
+          .then((res) => {
+            if (res.length != 4) {
+              socket
+                .to(socket.id)
+                .emit("gameError", "Not enough players to start game");
+              return;
+            }
+            const players = new Array<Player>();
+            for (let index = 0; index < res.length; index++) {
+              players.push(
+                new Player(res[0].id, res[0].handshake.auth.username, [], 0)
+              );
+            }
+            const game = new Game(data, new Deck(), players, players[0].name);
+            this.GAMES.push(game);
+            let room: Room = this.ROOMS.find(
+              (room: Room) => room.name === data
+            )!;
+            room.status = gameConfig.roomStatus.inProgress;
+            io.to(data).emit("game", game);
+          });
+      });
     });
 
-    io.on('card', (socket: Socket) => {
+    io.on("card", (socket: Socket) => {
       console.log(socket);
     });
 

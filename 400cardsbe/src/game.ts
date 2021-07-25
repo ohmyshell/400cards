@@ -1,13 +1,18 @@
-import { Deck } from './deck';
-import { Player } from './player';
+import { Deck } from "./deck";
+import { Player } from "./player";
 
 export class Game {
   name: string;
   deck: Deck = new Deck();
   players: Array<Player> = new Array<Player>();
-  current_player_turn: string = '';
-  
-  constructor(name: string,deck: Deck,players: Array<Player>,current_player_turn: string) {
+  current_player_turn: string = "";
+
+  constructor(
+    name: string,
+    deck: Deck,
+    players: Array<Player>,
+    current_player_turn: string
+  ) {
     this.name = name;
     this.deck = deck;
     this.players = players;
@@ -20,11 +25,11 @@ export class Game {
     this.players.forEach((player) => {
       player.cards = this.deck.deal_cards(cards_per_player);
     });
-    throw new Error('Abstract class should be implemented');
+    throw new Error("Abstract class should be implemented");
   }
 
   update() {
-    throw new Error('Abstract class should be implemented');
+    throw new Error("Abstract class should be implemented");
   }
 }
 /*
