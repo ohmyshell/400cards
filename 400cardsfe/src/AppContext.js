@@ -63,6 +63,10 @@ export const Provider = ({ children }) => {
         setCurrentRoom(tmpRoom);
       });
 
+      socket.on('game', (game) => {
+        console.log(game);
+      });
+
       socket.on('gameError', (err) => {
         setError(err);
       });
