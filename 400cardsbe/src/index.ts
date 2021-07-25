@@ -69,13 +69,11 @@ class App {
       });
 
       socket.on('startGame', (data) => {
-        let sockets : any;
         io.in(data).fetchSockets().then( res=>{
           if(res.length != 4){
             socket.emit('gameError','Not enough players to start game');
             return ;
           }
-          sockets = res;
           const players = new Array<Player>();
           for (let index = 0; index < res.length; index++) {
             players.push(new Player(res[0].id,res[0].handshake.auth.username,[],0));
