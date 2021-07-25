@@ -28,12 +28,20 @@ class App {
     });
 
     io.on('connection', (socket: Socket) => {
+
       console.log(
         `[${new Date().toLocaleString()}] connected ${socket.id}  ${
           socket.handshake.auth.username
         } Total Clients: ${io.engine.clientsCount}`
       );
-      socket.emit('rooms', Array.from(this.ROOMS.values()));
+
+      socket.on("ping", (cb) => {
+        if (typeof cb === "function")
+          cb();
+      });
+
+      socket.emit('rooms', this.ROOMS);
+
       socket.on('disconnect', () => {
         const playerRoom = this.ROOMS.find((room: Room) =>
           room.players.includes(socket.handshake.auth.username)
