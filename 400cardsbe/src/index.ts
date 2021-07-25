@@ -78,7 +78,7 @@ class App {
           for (let index = 0; index < res.length; index++) {
             players.push(new Player(res[0].id,res[0].handshake.auth.username,[],0));
           }
-          const game = new Game(new Deck(),players,players[0].name);
+          const game = new Game(data,new Deck(),players,players[0].name);
           this.GAMES.push(game);
           io.to(data).emit('game',game);
         });

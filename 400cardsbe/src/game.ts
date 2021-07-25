@@ -2,11 +2,13 @@ import { Deck } from './deck';
 import { Player } from './player';
 
 export class Game {
+  name: string;
   deck: Deck = new Deck();
   players: Array<Player> = new Array<Player>();
   current_player_turn: string = '';
   
-  constructor(deck: Deck,players: Array<Player>,current_player_turn: string) {
+  constructor(name: string,deck: Deck,players: Array<Player>,current_player_turn: string) {
+    this.name = name;
     this.deck = deck;
     this.players = players;
     this.current_player_turn = current_player_turn;
