@@ -1,10 +1,14 @@
-import { Server, Socket } from 'socket.io';
+import { RemoteSocket, Server, Socket } from 'socket.io';
 import { createServer } from 'http';
 import { Room } from './room';
 import { default as gameConfig } from './Config/config.json';
+import { Game } from './game';
+import { Player } from './player';
+import { Deck } from './deck';
 class App {
   PORT: string;
   ROOMS: Array<Room> = [];
+  GAMES: Array<Game> = [];
   constructor() {
     this.initializeRooms();
     this.PORT = process.env.PORT ? process.env.PORT : '6969';
@@ -63,6 +67,22 @@ class App {
         );
         io.emit('rooms', this.ROOMS);
       });
+
+      socket.on('startGame', (data) => {
+        io.in(data).fetchSockets().then( res=>{
+          if(res.length != 4){
+            socket.emit('gameError','Not enough players to start game');
+            return ;
+          }
+          const players = new Array<Player>();
+          for (let index = 0; index < res.length; index++) {
+            players.push(new Player(res[0].id,res[0].handshake.auth.username,[],0));
+          }
+          const game = new Game(new Deck(),players,players[0].name);
+          this.GAMES.push(game);
+          io.to(data).emit('game',game);
+        });
+      });  
     });
 
     io.on('card', (socket: Socket) => {
