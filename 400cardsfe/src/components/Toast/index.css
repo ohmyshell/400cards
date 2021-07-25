@@ -1,0 +1,13 @@
+.Toast {
+  position: absolute;
+  top: 95%;
+  left: 100%;
+  border: 1px solid red;
+  color: red;
+  border-radius: 3px;
+  transition: all 250ms ease;
+  padding: 1rem;
+}
+.show {
+  left: 95%;
+}

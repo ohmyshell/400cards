@@ -9,11 +9,14 @@ export default () => {
 
   return (
     <div className="Game">
+      <h3>Room: {params.roomname}</h3>
       {currentRoom?.players.map((player, idx) => (
-        <p key={idx}>{player}</p>
+        <p key={idx}>
+          <strong>Player {idx + 1}:</strong> {player}
+        </p>
       ))}
-      {params.roomname}
       <button
+        disabled={currentRoom?.players.length !== 4}
         onClick={() => {
           socket.emit('startGame', currentRoom.name);
         }}
