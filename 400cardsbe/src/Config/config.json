@@ -11,5 +11,6 @@
         "inProgress":"inProgress",
         "paused":"paused",
         "closed":"closed"
-    }
+    },
+    "dealPerPlayer400": 13
 }
