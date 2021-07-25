@@ -5,7 +5,12 @@ export class Game {
   deck: Deck = new Deck();
   players: Array<Player> = new Array<Player>();
   current_player_turn: string = '';
-  contructor() {}
+  
+  constructor(deck: Deck,players: Array<Player>,current_player_turn: string) {
+    this.deck = deck;
+    this.players = players;
+    this.current_player_turn = current_player_turn;
+  }
 
   start(players: string[]) {
     players.push();
