@@ -2,6 +2,7 @@ import { Server, Socket } from 'socket.io';
 import { createServer } from 'http';
 import { Room } from './room';
 import { default as gameConfig } from './Config/config.json';
+import { Game } from './game';
 class App {
   PORT: string;
   ROOMS: Array<Room> = [];
@@ -63,6 +64,11 @@ class App {
         );
         io.emit('rooms', this.ROOMS);
       });
+
+      socket.on('startGame', (data) => {
+        const sockets = io.in(data).fetchSockets();
+        console.log(sockets);
+      });  
     });
 
     io.on('card', (socket: Socket) => {
