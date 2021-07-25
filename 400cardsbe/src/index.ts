@@ -73,9 +73,10 @@ class App {
           .fetchSockets()
           .then((res) => {
             if (res.length != 4) {
-              socket
-                .to(socket.id)
-                .emit("gameError", "Not enough players to start game");
+              io.to(socket.id).emit(
+                "gameError",
+                "Not enough players to start game"
+              );
               return;
             }
             const players = this.initializePlayers(res);
