@@ -24,3 +24,24 @@ code {
   align-items: center;
   justify-content: center;
 }
+
+input,
+button {
+  padding: 0.5rem;
+  border: 1px solid gray;
+  border-radius: 3px;
+  background: none;
+  transition: all 100ms ease;
+  font-size: 1rem;
+}
+
+input:hover,
+button:hover {
+  border: 1px solid black;
+}
+
+button {
+  margin-top: 0.5rem;
+  cursor: pointer;
+  text-transform: uppercase;
+}

@@ -9,7 +9,9 @@ export const Provider = ({ children }) => {
   const [username, setUsername] = React.useState('');
   const [rooms, setRooms] = React.useState([]);
   const [currentRoom, setCurrentRoom] = React.useState({});
+  const [ping, setPing] = React.useState(0);
   const history = useHistory();
+  let interval = -1;
 
   const context = {
     socket,
@@ -36,6 +38,17 @@ export const Provider = ({ children }) => {
       socket.on('connect', () => {
         if (socket.connected) {
           history.push('/rooms');
+          let startTime;
+          if (interval > -1) clearInterval(interval);
+          interval = setInterval(function () {
+            startTime = Date.now();
+            socket.emit('ping');
+          }, 2000);
+
+          socket.on('pong', function () {
+            let latency = Date.now() - startTime;
+            setPing(latency);
+          });
         }
       });
 
@@ -45,18 +58,6 @@ export const Provider = ({ children }) => {
         );
         setRooms(rooms);
         setCurrentRoom(tmpRoom);
-      });
-
-      var startTime;
-
-      setInterval(function () {
-        startTime = Date.now();
-        socket.emit('ping');
-      }, 2000);
-
-      socket.on('pong', function () {
-        let latency = Date.now() - startTime;
-        console.log(latency);
       });
     }
   }, [socket?.connected]);
