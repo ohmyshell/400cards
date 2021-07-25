@@ -79,7 +79,7 @@ class App {
               return;
             }
             const players = this.initializePlayers(res);
-            const game = new Game(data, new Deck(), players, players[0].name);
+            const game = new Game(data, players, players[0].name);
             this.GAMES.push(game);
             let room: Room = this.ROOMS.find(
               (room: Room) => room.name === data
