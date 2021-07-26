@@ -15,11 +15,13 @@ export const Provider = ({ children }) => {
   const [gameState, setGameState] = React.useState({});
   let startTime;
   let interval = -1;
+  let firstConnect = true;
 
   const configSocket = () => {
     socket.on('connect', () => {
-      if (socket.connected) {
+      if (socket.connected && firstConnect) {
         history.push('/rooms');
+        firstConnect = false;
       }
     });
 
@@ -46,7 +48,6 @@ export const Provider = ({ children }) => {
     socket.on('pong', function () {
       let latency = Date.now() - startTime;
       setPing(latency);
-      console.log(latency, startTime);
     });
   };
   const context = {
@@ -62,6 +63,7 @@ export const Provider = ({ children }) => {
     setError,
     configSocket,
     ping,
+    gameState,
   };
 
   React.useEffect(() => {

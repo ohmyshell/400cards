@@ -2,9 +2,8 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import AppContext from '../../AppContext';
 import './index.css';
-import Card from '../../components/Card';
 
-export default () => {
+const Game = () => {
   const params = useParams();
   const { currentRoom, socket, gameState } = React.useContext(AppContext);
 
@@ -16,14 +15,20 @@ export default () => {
           <strong>Player {idx + 1}:</strong> {player}
         </p>
       ))}
-      <button
-        disabled={currentRoom?.players.length !== 4}
-        onClick={() => {
-          socket.emit('startGame', currentRoom.name);
-        }}
-      >
-        Start
-      </button>
+      {gameState ? (
+        <div></div>
+      ) : (
+        <button
+          disabled={currentRoom?.players.length !== 4}
+          onClick={() => {
+            socket.emit('startGame', currentRoom.name);
+          }}
+        >
+          Start
+        </button>
+      )}
     </div>
   );
 };
+
+export default Game;

@@ -5,7 +5,7 @@ import AppContext from '../../AppContext';
 import { useHistory } from 'react-router-dom';
 
 const Rooms = () => {
-  const { socket, rooms, setCurrentRoom } = React.useContext(AppContext);
+  const { socket, rooms } = React.useContext(AppContext);
   const history = useHistory();
 
   return (

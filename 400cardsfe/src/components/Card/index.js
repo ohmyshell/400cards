@@ -1,6 +1,6 @@
 import './index.css';
 
-export default ({ value, suite }) => {
+const Card = ({ value, suite }) => {
   const suitesMap = {
     Spade: '♠',
     Heart: '♥',
@@ -20,3 +20,5 @@ export default ({ value, suite }) => {
     </div>
   );
 };
+
+export default Card;

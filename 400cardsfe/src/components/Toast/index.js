@@ -2,7 +2,7 @@ import React from 'react';
 import AppContext from '../../AppContext';
 import './index.css';
 
-export default () => {
+const Toast = () => {
   const { error } = React.useContext(AppContext);
   const [showing, setShowing] = React.useState(false);
   let timeout = -1;
@@ -18,3 +18,5 @@ export default () => {
   }, [error]);
   return <div className={showing ? 'Toast show' : 'Toast'}>{error}</div>;
 };
+
+export default Toast;
