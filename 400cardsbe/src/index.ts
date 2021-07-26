@@ -1,18 +1,18 @@
-import { RemoteSocket, Server, Socket } from "socket.io";
-import { createServer } from "http";
-import { Room } from "./room";
-import { default as gameConfig } from "./Config/config.json";
-import { Game } from "./game";
-import { Player } from "./player";
-import { Deck } from "./deck";
-import { isObject } from "node:util";
+import { RemoteSocket, Server, Socket } from 'socket.io';
+import { createServer } from 'http';
+import { Room } from './room';
+import { default as gameConfig } from './Config/config.json';
+import { Game } from './game';
+import { Player } from './player';
+import { Deck } from './deck';
+import { isObject } from 'node:util';
 class App {
   PORT: string;
   ROOMS: Array<Room> = [];
   GAMES: Array<Game> = [];
   constructor() {
     this.initializeRooms();
-    this.PORT = process.env.PORT ? process.env.PORT : "6969";
+    this.PORT = process.env.PORT ? process.env.PORT : '6969';
     this.run();
   }
 
@@ -20,32 +20,32 @@ class App {
     const server = createServer();
     const io = new Server(server, {
       cors: {
-        origin: "*",
+        origin: '*',
       },
     });
 
     io.use((socket: Socket, next: Function) => {
       const username = socket.handshake.auth.username;
       if (!username) {
-        return next(new Error("invalid username"));
+        return next(new Error('invalid username'));
       }
       next();
     });
 
-    io.on("connection", (socket: Socket) => {
+    io.on('connection', (socket: Socket) => {
       console.log(
         `[${new Date().toLocaleString()}] connected ${socket.id}  ${
           socket.handshake.auth.username
         } Total Clients: ${io.engine.clientsCount}`
       );
 
-      socket.on("ping", function () {
-        socket.emit("pong");
+      socket.on('ping', function () {
+        socket.emit('pong');
       });
 
-      socket.emit("rooms", this.ROOMS);
+      socket.emit('rooms', this.ROOMS);
 
-      socket.on("disconnect", () => {
+      socket.on('disconnect', () => {
         const playerRoom = this.ROOMS.find((room: Room) =>
           room.players.includes(socket.handshake.auth.username)
         );
@@ -53,7 +53,7 @@ class App {
           playerRoom.players.indexOf(socket.handshake.auth.username),
           1
         );
-        io.emit("rooms", this.ROOMS);
+        io.emit('rooms', this.ROOMS);
         console.log(
           `[${new Date().toLocaleString()}] disconnected ${socket.id}  ${
             socket.handshake.auth.username
@@ -61,22 +61,22 @@ class App {
         );
       });
 
-      socket.on("room", (data) => {
+      socket.on('room', (data) => {
         socket.join(data);
         this.ROOMS.find((room: Room) => room.name === data)?.players.push(
           socket.handshake.auth.username
         );
-        io.emit("rooms", this.ROOMS);
+        io.emit('rooms', this.ROOMS);
       });
 
-      socket.on("startGame", (data) => {
+      socket.on('startGame', (data) => {
         io.in(data)
           .fetchSockets()
           .then((res) => {
             if (res.length != 4) {
               io.to(socket.id).emit(
-                "gameError",
-                "Not enough players to start game"
+                'gameError',
+                'Not enough players to start game'
               );
               return;
             }
@@ -92,7 +92,7 @@ class App {
       });
     });
 
-    io.on("card", (socket: Socket) => {
+    io.on('card', (socket: Socket) => {
       console.log(socket);
     });
 
@@ -126,7 +126,10 @@ class App {
   emitCardsToPlayers(game: any, io: any) {
     let players = game.players;
     for (let index = 0; index < players.length; index++) {
-      io.to(players[index].id).emit(players[index].deal);
+      io.to(players[index].id).emit({
+        room: game.name,
+        player: players[index],
+      });
     }
   }
 }
