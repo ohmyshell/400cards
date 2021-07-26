@@ -43,6 +43,18 @@ class App {
         socket.emit('pong');
       });
 
+      socket.on('reconnect', (attempt) => {
+        if (attempt >= 5) {
+          io.to(socket.id).emit(
+            'reconnectFailed',
+            'You have failed to reconnect'
+          );
+          return;
+        } else {
+          io.to(socket.id).emit('reconnectSuccess', this.ROOMS);
+        }
+      });
+
       socket.emit('rooms', this.ROOMS);
 
       socket.on('disconnect', () => {
