@@ -2,10 +2,11 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import AppContext from '../../AppContext';
 import './index.css';
+import Card from '../../components/Card';
 
 export default () => {
   const params = useParams();
-  const { currentRoom, socket } = React.useContext(AppContext);
+  const { currentRoom, socket, gameState } = React.useContext(AppContext);
 
   return (
     <div className="Game">
