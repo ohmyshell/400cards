@@ -5,6 +5,7 @@ import { default as gameConfig } from "./Config/config.json";
 import { Game } from "./game";
 import { Player } from "./player";
 import { Deck } from "./deck";
+import { isObject } from "node:util";
 class App {
   PORT: string;
   ROOMS: Array<Room> = [];
@@ -86,7 +87,7 @@ class App {
               (room: Room) => room.name === data
             )!;
             room.status = gameConfig.roomStatus.inProgress;
-            io.to(data).emit("game", game);
+            this.emitCardsToPlayers(game, io);
           });
       });
     });
@@ -121,6 +122,12 @@ class App {
       players.push(player);
     }
     return players;
+  }
+  emitCardsToPlayers(game: any, io: any) {
+    let players = game.players;
+    for (let index = 0; index < players.length; index++) {
+      io.to(players[index].id).emit(players[index].deal);
+    }
   }
 }
 new App();
