@@ -34,9 +34,7 @@ class App {
 
     io.on('connection', (socket: Socket) => {
       console.log(
-        `[${new Date().toLocaleString()}] connected ${socket.id}  ${
-          socket.handshake.auth.username
-        } Total Clients: ${io.engine.clientsCount}`
+        `connected ${socket.handshake.auth.username}--${socket.id}--Total Clients: ${io.engine.clientsCount}`
       );
 
       socket.on('ping', function () {
@@ -45,13 +43,10 @@ class App {
 
       socket.on('reconnect', (attempt) => {
         if (attempt >= 5) {
-          io.to(socket.id).emit(
-            'reconnectFailed',
-            'You have failed to reconnect'
-          );
+          io.to(socket.id).emit('gameError', 'You have failed to reconnect');
           return;
         } else {
-          io.to(socket.id).emit('reconnectSuccess', this.ROOMS);
+          io.to(socket.id).emit('rooms', this.ROOMS);
         }
       });
 
@@ -109,9 +104,7 @@ class App {
     });
 
     server.listen(this.PORT);
-    console.log(
-      `[${new Date().toLocaleString()}] running on port ${this.PORT}`
-    );
+    console.log(`running on port ${this.PORT}`);
   }
   initializeRooms() {
     for (let i = 0; i < gameConfig.rooms.length; i++) {
@@ -145,4 +138,8 @@ class App {
     }
   }
 }
+let tmpLog = console.log;
+console.log = (msg) => {
+  tmpLog(`[${new Date().toLocaleString()}] ${msg}`);
+};
 new App();

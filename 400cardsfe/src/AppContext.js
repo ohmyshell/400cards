@@ -25,6 +25,10 @@ export const Provider = ({ children }) => {
       }
     });
 
+    socket.io.on('reconnect', () => {
+      socket.emit('reconnect', 0);
+    });
+
     socket.on('rooms', (rooms) => {
       const tmpRoom = rooms.find((room) => room.players.indexOf(username) > -1);
       setRooms(rooms);
