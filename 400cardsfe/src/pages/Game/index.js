@@ -5,8 +5,10 @@ import './index.css';
 
 const Game = () => {
   const params = useParams();
-  const { currentRoom, socket, gameState } = React.useContext(AppContext);
-
+  const { currentRoom, socket } = React.useContext(AppContext);
+  React.useEffect(() => {
+    console.log(currentRoom);
+  }, []);
   return (
     <div className="Game">
       <h3>Room: {params.roomname}</h3>
@@ -15,18 +17,14 @@ const Game = () => {
           <strong>Player {idx + 1}:</strong> {player}
         </p>
       ))}
-      {gameState ? (
-        <div></div>
-      ) : (
-        <button
-          disabled={currentRoom?.players.length !== 4}
-          onClick={() => {
-            socket.emit('startGame', currentRoom.name);
-          }}
-        >
-          Start
-        </button>
-      )}
+      <button
+        disabled={currentRoom?.players.length !== 4}
+        onClick={() => {
+          socket.emit('startGame', currentRoom.name);
+        }}
+      >
+        Start
+      </button>
     </div>
   );
 };

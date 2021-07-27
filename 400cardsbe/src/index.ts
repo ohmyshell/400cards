@@ -1,15 +1,17 @@
 import { Server, Socket } from 'socket.io';
 import { createServer, Server as httpServer } from 'http';
-import { Room } from './room';
-import { default as gameConfig } from './Config/config.json';
+import { Room } from './game/room';
+import { default as gameConfig } from './cfg/config.json';
+import { Logger } from './util/logger';
+import { EventHandler } from './io/eventHandler';
 
 class App {
   PORT: string;
   ROOMS: Array<Room> = [];
   io: Server;
   server: httpServer;
+  eventHandler: EventHandler;
   constructor() {
-    this.initializeRooms();
     this.PORT = process.env.PORT ? process.env.PORT : '6969';
     this.server = createServer();
     this.io = new Server(this.server, {
@@ -17,6 +19,11 @@ class App {
         origin: '*',
       },
     });
+    this.eventHandler = new EventHandler(this.io);
+    //init rooms using room names
+    for (let i = 0; i < gameConfig.roomCount; i++) {
+      this.ROOMS.push(new Room(gameConfig.roomNames[i]));
+    }
   }
 
   middleware(socket: Socket, next: Function) {
@@ -27,90 +34,42 @@ class App {
     next();
   }
 
-  pingEventHandler(socket: Socket) {
-    socket.emit('pong');
-  }
-
-  reconnectEventHandler(id: string) {
-    this.io.to(id).emit('rooms', this.ROOMS);
-  }
-
-  disconnectEventHandler(id: string, username: string) {
-    this.ROOMS.forEach((room) => room.removePlayer(username));
-    this.io.emit('rooms', this.ROOMS);
-    console.log(
-      `disconnected ${id}  ${username}
-      Total Clients: ${this.io.engine.clientsCount}`
-    );
-  }
-
-  roomEventHandler(roomName: string, socket: Socket, username: string) {
-    socket.join(roomName);
-    this.ROOMS.find((room: Room) => room.name === roomName)?.addPlayer(
-      socket.id,
-      username
-    );
-    this.io.emit('rooms', this.ROOMS);
-  }
-
-  startGameEventHandler(roomName: string) {
-    let room: Room = this.ROOMS.find((room: Room) => room.name === roomName)!;
-    try {
-      room.startGame();
-    } catch (error) {
-      this.io.to(room.name).emit('gameError', error);
-    }
-    room.status = gameConfig.roomStatus.inProgress;
-    room.getPlayersCards().forEach((player) => {
-      const { id, cards } = player;
-      this.io.to(id).emit('cards', cards);
-    });
-  }
-
-  initializeRooms() {
-    for (let i = 0; i < gameConfig.rooms.length; i++) {
-      this.ROOMS.push(
-        new Room(gameConfig.rooms[i].name, gameConfig.roomStatus.open)
-      );
-    }
-  }
-
   run() {
     this.io.use(this.middleware);
-
+    
     this.io.on('connection', (socket: Socket) => {
       const username = socket.handshake.auth.username;
-      console.log(
-        `connected ${username}${socket.id}
-        Total Clients: ${this.io.engine.clientsCount}`
-      );
+
+      Logger.logEntry(socket.id, this.io.engine.clientsCount, username, true);
+
       socket.emit('rooms', this.ROOMS);
 
-      socket.on('ping', this.pingEventHandler);
+      socket.on('ping', () => this.eventHandler.pingEventHandler(socket));
 
-      socket.on('reconnect', () => this.reconnectEventHandler(socket.id));
+      socket.on('reconnect', () =>
+        this.eventHandler.reconnectEventHandler(socket.id, this.ROOMS)
+      );
 
       socket.on('disconnect', () =>
-        this.disconnectEventHandler(socket.id, username)
+        this.eventHandler.disconnectEventHandler(
+          socket.id,
+          username,
+          this.ROOMS
+        )
       );
 
       socket.on('room', (data) =>
-        this.roomEventHandler(data, socket, username)
+        this.eventHandler.roomEventHandler(data, socket, username, this.ROOMS)
       );
 
       socket.on('startGame', (roomName) =>
-        this.startGameEventHandler(roomName)
+        this.eventHandler.startGameEventHandler(roomName, this.ROOMS)
       );
     });
 
     this.server.listen(this.PORT);
-    console.log(`running on port ${this.PORT}`);
+    Logger.log(`running on port ${this.PORT}`);
   }
 }
-
-let tmpLog = console.log;
-console.log = (msg) => {
-  tmpLog(`[${new Date().toLocaleString()}] ${msg}`);
-};
 
 new App().run();

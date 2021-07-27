@@ -1,27 +1,39 @@
 import { Deck } from './deck';
 import { Player } from './player';
-import { default as gameConfig } from './Config/config.json';
+
+enum ROOM_STATUS {
+  OPEN = 'o',
+  IN_PROGRESS = 'ip',
+  PAUSED = 'p',
+  CLOSED = 'c',
+}
 
 export class Room {
   name: string;
   status: string;
   deck: Deck;
   players: Player[];
-  current_player_turn: string = '';
+  current_player_turn: string;
+  maxPlayers: number;
+  dealPerPlayer: number;
 
-  constructor(name: string, status: string) {
+  constructor(name: string) {
     this.name = name;
-    this.status = status;
+    this.status = ROOM_STATUS.OPEN;
     this.players = [];
     this.current_player_turn = '';
     this.deck = new Deck();
+    // initalize from config.
+    this.maxPlayers = 0;
+    this.dealPerPlayer = 0;
   }
 
   startGame() {
-    if (this.players.length != gameConfig.maxPlayers)
+    if (this.players.length != this.maxPlayers)
       throw new Error('Cannot start game. Only 4 players.');
+    this.status = ROOM_STATUS.IN_PROGRESS;
     this.players.forEach((player) => {
-      player.cards = this.deck.deal_cards(gameConfig.dealPerPlayer400);
+      player.cards = this.deck.deal_cards(this.dealPerPlayer);
     });
   }
 

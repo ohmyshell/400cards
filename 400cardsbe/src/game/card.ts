@@ -1,4 +1,17 @@
-export type Value = 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 'Jack' | 'Queen' | 'King' | 'Ace';
+export type Value =
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6
+  | 7
+  | 8
+  | 9
+  | 10
+  | 'Jack'
+  | 'Queen'
+  | 'King'
+  | 'Ace';
 export type Suite = 'Diamond' | 'Spade' | 'Club' | 'Heart';
 
 export default class Card {

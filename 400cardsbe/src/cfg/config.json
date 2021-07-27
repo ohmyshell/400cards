@@ -1,0 +1,17 @@
+{
+  "roomNames": [
+    "any",
+    "thing",
+    "will",
+    "work",
+    "get",
+    "a",
+    "list",
+    "from",
+    "elgoog",
+    "later"
+  ],
+  "roomCount": 5,
+  "maxPlayers": 4,
+  "dealPerPlayer400": 13
+}

@@ -30,9 +30,13 @@ export const Provider = ({ children }) => {
     });
 
     socket.on('rooms', (rooms) => {
-      const tmpRoom = rooms.find((room) => room.players.indexOf(username) > -1);
+      const tmpRoom = rooms?.filter(
+        (room) =>
+          room.players.filter((player) => player.name === username).length > 0
+      );
       setRooms(rooms);
       setCurrentRoom(tmpRoom);
+      console.log(tmpRoom);
     });
 
     socket.on('game', (game) => {
