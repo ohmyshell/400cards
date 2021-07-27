@@ -6,6 +6,7 @@ export class Player {
   cards: Array<Card>;
   vote: number;
   score: number;
+  
   constructor(id: string, name: string, cards: Array<Card>, vote: number) {
     this.id = id;
     this.name = name;
