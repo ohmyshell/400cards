@@ -32,12 +32,6 @@ export class EventHandler {
     rooms
       .find((room: Room) => room.name === roomName)
       ?.addPlayer(socket.id, username);
-
-    console.log(
-      rooms.find((room: Room) => room.name === roomName),
-      roomName,
-      username
-    );
     this.io.emit('rooms', rooms);
   }
 
@@ -46,7 +40,7 @@ export class EventHandler {
     try {
       room.startGame();
     } catch (error) {
-      this.io.to(room.name).emit('gameError', error);
+      this.io.to(room.name).emit('gameError', error.message);
     }
     room.getPlayersCards().forEach((player) => {
       const { id, cards } = player;

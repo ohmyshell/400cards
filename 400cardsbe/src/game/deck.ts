@@ -1,10 +1,8 @@
 import Card, { Value, Suite } from './card';
 
 export class Deck {
-  card_count: Number;
   cards: Array<Card>;
   constructor() {
-    this.card_count = 0;
     this.cards = [];
     this.populate();
     this.shuffle();

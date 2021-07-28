@@ -30,13 +30,15 @@ export const Provider = ({ children }) => {
     });
 
     socket.on('rooms', (rooms) => {
-      const tmpRoom = rooms?.filter(
-        (room) =>
-          room.players.filter((player) => player.name === username).length > 0
-      );
+      let tmpRoom = {};
+      rooms.forEach((room) => {
+        if (
+          room.players.find((player) => player.name === username) !== undefined
+        )
+          tmpRoom = room;
+      });
       setRooms(rooms);
       setCurrentRoom(tmpRoom);
-      console.log(tmpRoom);
     });
 
     socket.on('game', (game) => {
@@ -44,6 +46,7 @@ export const Provider = ({ children }) => {
     });
 
     socket.on('gameError', (err) => {
+      console.log(err);
       setError(err);
     });
 

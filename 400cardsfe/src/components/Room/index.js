@@ -5,7 +5,7 @@ const Room = ({ name, players, emit }) => {
     <div className="Room" onClick={() => emit(name)}>
       <h3>{name}</h3>
       {players.map((player, idx) => {
-        return <p key={idx}>{player}</p>;
+        return <p key={idx}>{player.name}</p>;
       })}
     </div>
   );

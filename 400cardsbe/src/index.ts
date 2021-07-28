@@ -36,11 +36,11 @@ class App {
 
   run() {
     this.io.use(this.middleware);
-    
+
     this.io.on('connection', (socket: Socket) => {
       const username = socket.handshake.auth.username;
 
-      Logger.logEntry(socket.id, this.io.engine.clientsCount, username, true);
+      Logger.logEntry(socket.id, username, this.io.engine.clientsCount, true);
 
       socket.emit('rooms', this.ROOMS);
 
