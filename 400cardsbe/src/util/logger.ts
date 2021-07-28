@@ -25,12 +25,17 @@ export class Logger {
   }
 
   static logEntry(
-    username: string,
     id: string,
+    username: string,
     clientsCount: number,
     enterLeave: boolean
   ) {
-    console.log(`${enterLeave ? '+' : '-'} ${username} ${id}`);
-    console.log(`Total Clients: ${clientsCount}`);
+    let msg = `${username} ${
+      enterLeave ? 'Connected' : 'Disconnected'
+    } ID: ${id}
+    Total Clients: ${clientsCount}`;
+    if (Logger.showTimeStamp) msg = `[${new Date().toLocaleString()}] ${msg}`;
+    if (Logger.addSeparators) msg += '\n-------------------------\n';
+    console.log(msg);
   }
 }
